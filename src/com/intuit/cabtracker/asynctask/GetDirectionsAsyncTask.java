@@ -46,10 +46,9 @@ public class GetDirectionsAsyncTask extends AsyncTask<Map<String, String>, Objec
     public void onPostExecute(ArrayList result)
     {
     	
-        progressDialog.dismiss();
+    	progressDialog.dismiss();
         if (exception == null)
-        {	activity.handleGetDirectionResult(result);
-            
+        {	activity.handleGetDirectionResult(result);           
         }
         else
         {

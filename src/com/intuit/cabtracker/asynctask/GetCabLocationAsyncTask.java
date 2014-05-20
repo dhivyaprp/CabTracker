@@ -12,6 +12,7 @@ import com.intuit.cabtracker.activity.wsclient.IntuitServerRestclient;
 
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.widget.Toast;
 
 public class GetCabLocationAsyncTask extends AsyncTask<String, Object,LatLng>
@@ -47,23 +48,32 @@ public class GetCabLocationAsyncTask extends AsyncTask<String, Object,LatLng>
         {
             activity.showCabLocation(result);
             
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                	Toast.makeText(activity, "Refreshing",
+                            Toast.LENGTH_SHORT).show();
+                	GetCabLocationAsyncTask asyncTask2 = new GetCabLocationAsyncTask(activity);
+                	asyncTask2.execute(routeNumber);
+                }
+            }, 1*60*1000);
+            
+            
+//            try {
+//				Thread.sleep(1*60*1000);
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//            GetCabLocationAsyncTask asyncTask2 = new GetCabLocationAsyncTask(activity);
+//    		asyncTask2.execute(routeNumber);	
             
         }
         else
         {
             processException();
         }
-        try {
-			Thread.sleep(1*60*1000);
-			progressDialog = new ProgressDialog(activity);
-		       
-	        progressDialog.setMessage("Refreshing");
-	        progressDialog.show();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        new GetCabLocationAsyncTask(activity).execute(routeNumber);
+        
     }
  
    
