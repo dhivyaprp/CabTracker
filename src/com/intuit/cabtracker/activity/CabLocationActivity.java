@@ -51,10 +51,7 @@ GooglePlayServicesClient.OnConnectionFailedListener
       {
 
 	
-	private  LatLng STOP = new LatLng(12.916906, 77.620889);
-	private LatLng STOP1 =new LatLng(12.916266, 77.634460);
-	private  LatLng CAB = new LatLng(12.921034, 77.644116);
-	private  LatLng STOP2 = new LatLng(12.923395, 77.670682);
+	
 	private  LatLng STOP3= new LatLng(12.924242, 77.681266);
 	private LatLng MYLOC;
 	private GoogleMap map;
@@ -64,12 +61,13 @@ GooglePlayServicesClient.OnConnectionFailedListener
 	private int width, height;
 	private LocationClient mLocationClient;
 	private String cabNumber; 
-	private String distance;
 	TextView mymsg;
+	
     private static final LocationRequest REQUEST = LocationRequest.create()
             .setInterval(5000)         // 5 seconds
             .setFastestInterval(16)    // 16ms = 60fps
             .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+    
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -84,7 +82,7 @@ GooglePlayServicesClient.OnConnectionFailedListener
 		mLocationClient = new LocationClient(this, this, this);
 		
 		
-		//Text from Previous activity displayed
+		//Cab Number from Previous activity displayed
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
 		    cabNumber = extras.getString("cabNumber");
@@ -94,7 +92,9 @@ GooglePlayServicesClient.OnConnectionFailedListener
 	}
 		//Get route map
 		findRouteDetails(cabNumber);
-		//findCabDetails(cabNumber);
+		
+		//find cab location and distance
+		findCabDetails(cabNumber);
 		
 	}
 	
@@ -117,14 +117,6 @@ GooglePlayServicesClient.OnConnectionFailedListener
 	
 	public void drawRoutemap(ArrayList<LatLng> stopsList){
 		
-		
-		
-//		ArrayList<LatLng> stopsList = new ArrayList<LatLng>();
-//		stopsList.add(STOP);
-//		stopsList.add(STOP1);
-//		stopsList.add(STOP2);
-//		stopsList.add(STOP3);
-		
 		if (newPolyline != null)
 		{
 			newPolyline.remove();
@@ -143,9 +135,15 @@ GooglePlayServicesClient.OnConnectionFailedListener
 		
 		GetCabDetailsAsyncTask asyncTask = new GetCabDetailsAsyncTask(this);
 		asyncTask.execute(routeNumer);	
+		//this function will return to drawRoutemap method
+		
+		
+	}
+	public void findCabDetails(String routeNumer)
+	{
 		GetCabLocationAsyncTask asyncTask2 = new GetCabLocationAsyncTask(this);
 		asyncTask2.execute(routeNumer);	
-		
+		//this function will return to showCabLocation method
 	}
 	
 	public void findDirections(double fromPositionDoubleLat, double fromPositionDoubleLong, double toPositionDoubleLat, double toPositionDoubleLong, String mode)
@@ -180,9 +178,9 @@ GooglePlayServicesClient.OnConnectionFailedListener
 		
 		super.onResume();
 		
-    	latlngBounds = createLatLngBoundsObject(CAB, STOP);
-        map.moveCamera(CameraUpdateFactory.newLatLngBounds(latlngBounds, width, height, 150));
-        
+		findRouteDetails(cabNumber);
+
+		findCabDetails(cabNumber);
        
 	}
 
@@ -200,10 +198,8 @@ GooglePlayServicesClient.OnConnectionFailedListener
 		}
 		
 		newPolyline = map.addPolyline(rectLine);
-		
-	
-			latlngBounds = createLatLngBoundsObject(STOP, CAB);
-	        map.animateCamera(CameraUpdateFactory.newLatLngBounds(latlngBounds, width, height, 100));
+		latlngBounds = createLatLngBoundsObject(directionPoints.get(0), directionPoints.get(directionPoints.size()));
+	    map.animateCamera(CameraUpdateFactory.newLatLngBounds(latlngBounds, width, height, 100));
 				
 	}
 	

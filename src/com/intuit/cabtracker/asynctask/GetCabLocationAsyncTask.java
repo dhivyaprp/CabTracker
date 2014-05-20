@@ -53,6 +53,17 @@ public class GetCabLocationAsyncTask extends AsyncTask<String, Object,LatLng>
         {
             processException();
         }
+        try {
+			Thread.sleep(1*60*1000);
+			progressDialog = new ProgressDialog(activity);
+		       
+	        progressDialog.setMessage("Refreshing");
+	        progressDialog.show();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        new GetCabLocationAsyncTask(activity).execute(routeNumber);
     }
  
    
