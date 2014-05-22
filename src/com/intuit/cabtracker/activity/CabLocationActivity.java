@@ -37,6 +37,7 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.intuit.cabtracker.R;
 import com.intuit.cabtracker.activity.wsclient.GMapV2Direction;
+import com.intuit.cabtracker.application.ActivityStatus;
 import com.intuit.cabtracker.asynctask.GetCabDetailsAsyncTask;
 import com.intuit.cabtracker.asynctask.GetCabLocationAsyncTask;
 import com.intuit.cabtracker.asynctask.GetDirectionsAsyncTask;
@@ -180,7 +181,7 @@ GooglePlayServicesClient.OnConnectionFailedListener
 	protected void onResume() {
 		
 		super.onResume();
-		
+	     ActivityStatus.activityResumed(); 
     	latlngBounds = createLatLngBoundsObject(CAB, STOP);
       map.moveCamera(CameraUpdateFactory.newLatLngBounds(latlngBounds, width, height, 100));
 
@@ -260,6 +261,14 @@ GooglePlayServicesClient.OnConnectionFailedListener
     protected void onStop() {
         // Disconnecting the client invalidates it.
         mLocationClient.disconnect();
+        super.onStop();
+    }
+	
+	@Override
+    protected void onPause() {
+        // Disconnecting the client invalidates it.
+        mLocationClient.disconnect();
+        ActivityStatus.activityPaused(); 
         super.onStop();
     }
 	

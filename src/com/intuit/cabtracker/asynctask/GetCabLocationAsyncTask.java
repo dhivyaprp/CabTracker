@@ -9,6 +9,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.intuit.cabtracker.activity.CabLocationActivity;
 import com.intuit.cabtracker.activity.wsclient.GMapV2Direction;
 import com.intuit.cabtracker.activity.wsclient.IntuitServerRestclient;
+import com.intuit.cabtracker.application.ActivityStatus;
 
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
@@ -47,27 +48,23 @@ public class GetCabLocationAsyncTask extends AsyncTask<String, Object,LatLng>
         if (exception == null)
         {
             activity.showCabLocation(result);
-            
-            new Handler().postDelayed(new Runnable() {
+            if (isCancelled());
+            else
+            {
+            	new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
                 	Toast.makeText(activity, "Refreshing",
                             Toast.LENGTH_SHORT).show();
                 	GetCabLocationAsyncTask asyncTask2 = new GetCabLocationAsyncTask(activity);
+                	if(ActivityStatus.isActivityVisible())
                 	asyncTask2.execute(routeNumber);
+                	else
+                	asyncTask2.cancel(true);
                 }
             }, 1*60*1000);
             
-            
-//            try {
-//				Thread.sleep(1*60*1000);
-//			} catch (InterruptedException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//            GetCabLocationAsyncTask asyncTask2 = new GetCabLocationAsyncTask(activity);
-//    		asyncTask2.execute(routeNumber);	
-            
+        }
         }
         else
         {
